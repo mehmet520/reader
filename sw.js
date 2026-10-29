@@ -1,6 +1,6 @@
 /* sw.js — cevrimdisi calisma: uygulama dosyalari onbellekten gelir, arka planda yenilenir (Kelime Karti'ndaki gibi).
    Okuma dosyalari burada degil, IndexedDB'de durur. Uygulama degisince ONBELLEK surumunu artir. */
-const ONBELLEK = 'reader-v1.0.0'
+const ONBELLEK = 'reader-v1.0.1'
 const DOSYALAR = ['./', 'index.html', 'app.js']
 
 self.addEventListener('install', (e) => {
