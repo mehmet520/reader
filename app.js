@@ -69,8 +69,8 @@
     }))
   }
 
-  // Ayni adla gelen dosya eskisinin uzerine yazilmaz (kullanici karari 29.10.2026): ikinci kopya "ad 2.html", sonra "ad 3.html" ... olarak
-  // saklanir; icerigi bunlardan biriyle birebir ayniysa yeni kopya acilmaz, o acilir. Secim kutusu her durumda sifirlanir: bir hatadan
+  // Ayni adla gelen dosya eskisinin yerine gecer (kullanici karari 29.10.2026; "ad 2.html" kopyasi geri alindi): okuma yeri, ayarlar ve ⚑
+  // isaretleri dosya adina bagli, ayni ad altinda korunur. Icerik ayniysa yalniz acilir. Secim kutusu her durumda sifirlanir: bir hatadan
   // sonra ayni dosya yeniden secilince change olayi gelmiyordu.
   $('pick').addEventListener('change', async (e) => {
     msg()
@@ -79,14 +79,12 @@
       for (const file of picked) {
         const text = await file.text()
         if (!isReader(text)) { notes.push('Not a reading file: ' + file.name); continue }
-        const title = (text.match(/<title>([^<]*)<\/title>/i) || [])[1], m = file.name.match(/^(.*?)(\.html?)?$/i)
-        let name = file.name, k = 1, same = null
-        for (let f = await get(name); f; f = await get(name)) { if (f.text === text) { same = name; break } name = `${m[1]} ${++k}${m[2] || ''}` }
-        if (!same) {
-          await put({ name, title: title && title.replace(/&amp;/g, '&'), text, size: file.size, added: Date.now(), opened: Date.now() })
-          if (name !== file.name) notes.push('Saved as another copy: ' + name)
+        const title = (text.match(/<title>([^<]*)<\/title>/i) || [])[1], old = await get(file.name)
+        if (!old || old.text !== text) {
+          await put({ name: file.name, title: title && title.replace(/&amp;/g, '&'), text, size: file.size, added: Date.now(), opened: Date.now() })
+          if (old) notes.push('Replaced the stored copy: ' + file.name)
         }
-        ok.push(same || name)
+        ok.push(file.name)
       }
     } catch (err) { notes.push('Could not open: ' + (err && err.message || err)) } finally { e.target.value = '' }
     msg(notes.join(' · '))
