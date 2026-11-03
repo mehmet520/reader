@@ -19,16 +19,18 @@ li a{flex:1;color:var(--fg);text-decoration:none;font-weight:600;overflow-wrap:a
 li a span{display:block;font-weight:400}
 li button{border:1px solid var(--line);background:none;color:var(--muted);border-radius:8px;padding:6px 10px;font:inherit;font-size:.85em;cursor:pointer}
 #msg{min-height:1.5em;color:#c0392b}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.top select{font:inherit;font-size:.9em}
 </style>
 </head>
 <body>
 <main>
-<h1>Reader</h1>
-<p class="muted">Opens reading files (HTML) made by the html-okuma-dosyasi tool. Files stay on this device; nothing is uploaded.</p>
-<label class="open">＋ Open file<input id="pick" type="file" accept=".html,.htm,text/html" multiple></label>
+<div class="top"><h1>Reader</h1><label class="muted"><span data-t="Interface">Interface</span> <select id="uil" title="Language of menus, buttons and messages"><option value="en">English</option><option value="tr">Türkçe</option><option value="de">Deutsch</option></select></label></div>
+<p class="muted" data-t>Opens reading files (HTML) made by the html-okuma-dosyasi tool. Files stay on this device; nothing is uploaded.</p>
+<label class="open"><span data-t>＋ Open file</span><input id="pick" type="file" accept=".html,.htm,text/html" multiple></label>
 <div id="msg" role="status"></div>
 <ul id="list"></ul>
-<p class="muted" id="empty" hidden>No files yet. Download a reading file, then open it here. It is kept here for next time, with your read marks and flags.</p>
+<p class="muted" id="empty" hidden data-t>No files yet. Download a reading file, then open it here. It is kept here for next time, with your read marks and flags.</p>
 </main>
 <script src="app.js"></script>
 </body>
