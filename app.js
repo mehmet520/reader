@@ -6,7 +6,7 @@
   const DB = 'reader-files', ST = 'files'
   // Arayuz dili (ÖNERİ-54, 56; 03.11.2026): okuma dosyalariyla ayni ayar (localStorage uiLang; ayni koken), varsayilan tarayicinin dili
   const UI = {
-    'Interface': ['Arayüz', 'Oberfläche'],
+    'Interface language': ['Arayüz dili', 'Oberflächensprache'],
     'Language of menus, buttons and messages': ['Menülerin, düğmelerin ve iletilerin dili', 'Sprache der Menüs, Schaltflächen und Meldungen'],
     'Opens reading files (HTML) made by the html-okuma-dosyasi tool. Files stay on this device; nothing is uploaded.': ['html-okuma-dosyasi aracının ürettiği okuma dosyalarını (HTML) açar. Dosyalar bu cihazda kalır; hiçbir şey yüklenmez.', 'Öffnet Lesedateien (HTML), die das Werkzeug html-okuma-dosyasi erstellt. Die Dateien bleiben auf diesem Gerät; nichts wird hochgeladen.'],
     '＋ Open file': ['＋ Dosya aç', '＋ Datei öffnen'],
