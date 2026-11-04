@@ -1,6 +1,8 @@
 /* Okuyucu: secilen okuma dosyasini (build_reader.py ciktisi) cihazda saklar (IndexedDB) ve bu adreste acar.
    Dosya ayni kokene (origin) yazildigi icin localStorage calisir: okundu isaretleri, okuma yeri ve ⚑ kalici olur.
    Okuma dosyasi depo anahtarini adresteki ?f=<dosya adi>'ndan alir (reader_page.py, FK).
+   ?src=<ayni kokende bir okuma dosyasi> (ÖNERİ-64, 04.11.2026): dosyayi indirir, cihazda saklar ve acar; boylece yayinlanan bir dosya
+   (books/) tek bir baglantiyla kutuphaneye girer. Ag yoksa saklanan kopya acilir; icerik degistiyse eskisinin yerine gecer.
    Hepsi bir fonksiyonun icinde: document.write ayni global'i kullanir, okuma dosyasinin const'lariyla carpismasin. */
 (() => {
   const DB = 'reader-files', ST = 'files'
@@ -113,7 +115,28 @@
     list()
   })
 
+  async function fromSrc(src) {
+    const u = new URL(src, location.href), name = decodeURIComponent(u.pathname.split('/').pop())
+    if (u.origin !== location.origin || !name) { msg(T('Could not open: {e}', { e: src })); return list() }
+    const old = await get(name)
+    let text
+    try {
+      const r = await fetch(u, { cache: 'no-store' })
+      if (!r.ok) throw new Error('HTTP ' + r.status)
+      text = await r.text()
+    } catch (err) {
+      if (old) return show(name)
+      msg(T('Could not open: {e}', { e: err && err.message || err })); return list()
+    }
+    if (!isReader(text)) { msg(T('Not a reading file: {n}', { n: name })); return list() }
+    if (!old || old.text !== text) {
+      const title = (text.match(/<title>([^<]*)<\/title>/i) || [])[1]
+      await put({ name, title: title && title.replace(/&amp;/g, '&'), text, size: new Blob([text]).size, added: old ? old.added : Date.now(), opened: Date.now() })
+    }
+    return show(name)
+  }
+
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {})
-  const f = new URLSearchParams(location.search).get('f')
-  f ? show(f) : list()
+  const q = new URLSearchParams(location.search), f = q.get('f'), src = q.get('src')
+  src ? fromSrc(src) : f ? show(f) : list()
 })()

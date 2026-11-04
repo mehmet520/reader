@@ -1,6 +1,6 @@
 /* sw.js — cevrimdisi calisma: uygulama dosyalari onbellekten gelir, arka planda yenilenir (Kelime Karti'ndaki gibi).
    Okuma dosyalari burada degil, IndexedDB'de durur. Uygulama degisince ONBELLEK surumunu artir. */
-const ONBELLEK = 'reader-v1.1.1'
+const ONBELLEK = 'reader-v1.2.0'
 const DOSYALAR = ['./', 'index.html', 'app.js']
 
 self.addEventListener('install', (e) => {
@@ -12,7 +12,8 @@ self.addEventListener('activate', (e) => {
 })
 self.addEventListener('fetch', (e) => {
   const r = e.request
-  if (r.method !== 'GET' || new URL(r.url).origin !== location.origin) return
+  // ?src= ile indirilen okuma dosyasi (cache: 'no-store') onbellege girmez; IndexedDB'de saklanir
+  if (r.method !== 'GET' || new URL(r.url).origin !== location.origin || r.cache === 'no-store') return
   // once onbellek, arka planda ag (stale-while-revalidate); ?f=<ad> adresi de index.html'den gelir (ignoreSearch)
   e.respondWith(caches.open(ONBELLEK).then(async (c) => {
     const eski = await c.match(r, { ignoreSearch: true })
